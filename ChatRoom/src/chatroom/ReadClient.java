@@ -35,6 +35,7 @@ public class ReadClient extends Thread{
                         String changeNickName;
                         if(sms.contains("Server send to client data user: "))
                         {
+                            System.out.println("da vao 1");
                             manyName = sms.substring(33);
                             form2.setTextAreaUser(manyName);
                             continue;
@@ -42,17 +43,52 @@ public class ReadClient extends Thread{
                         
                         if(sms.equals("Server Kick!"))
                         {
+                            System.out.println("da vao 2");
                             form2.serverKick();
                             continue;
                         }
                         
                         if(sms.contains("change Name!"))
                         {
+                            System.out.println("da vao 3");
                             changeNickName = sms.substring(12);
                             form2.changeName(changeNickName);
                             continue;
                         }
                         
+                        if(sms.contains("AcceptConnectToClient:"))
+                        {
+                            
+                            String name = sms.substring(23);
+                            System.out.println("Name:" + name);
+                            form2.showAccept(name);
+                            continue;
+                        }
+                        
+                        if(sms.contains("ClientAccepted:"))
+                        {
+                            System.out.println("da vao clientAccepted");
+                            String name = sms.substring(16);
+                            form2.ThongBaoAccepted(name);
+                            continue;
+                        }
+                        
+                        if(sms.contains("ClientNotAccepted: "))
+                        {
+                            System.out.println("da vao 5");
+                            String name = sms.substring(18);
+                            form2.ThongBaoNotAccepted(name);
+                            continue;
+                        }
+                        
+                        if(sms.contains("PrivateClinet!%"))
+                        {
+                            String[] data = sms.split("!%");
+                            form2.setTextHienThiCuaGiaoDienChatRieng(data[1]);
+                            continue;
+                        }
+                        
+                        System.out.println("da vao 6");
     			form2.setTextArea(sms);
     		}
     	}

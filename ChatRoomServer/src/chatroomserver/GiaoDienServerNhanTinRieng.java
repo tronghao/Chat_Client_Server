@@ -19,13 +19,14 @@ import javax.swing.SwingUtilities;
  * @author TrongHao
  */
 public class GiaoDienServerNhanTinRieng extends javax.swing.JFrame {
-
+    private GiaoDienServer form;
     /**
      * Creates new form GiaoDienServerNhanTinRieng
      */
-    public GiaoDienServerNhanTinRieng() {
+    public GiaoDienServerNhanTinRieng(GiaoDienServer form) {
         initComponents();
-        setLocationRelativeTo(null);
+        this.form = form;
+        setLocationRelativeTo(this.form);
         setVisible(true);
         
         cbxName.removeAllItems();

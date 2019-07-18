@@ -5,6 +5,7 @@
  */
 
 
+
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.DataOutputStream;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JRootPane;
 import javax.swing.SwingUtilities;
@@ -24,41 +26,7 @@ public class GiaoDienClient2 extends javax.swing.JFrame {
     private Client client;
     private Socket socket;
     private ReadClient read;
-    /**
-     * Creates new form GiaoDienClient2
-     * @param client
-     * @param socket
-     * @param write
-     */
-    
-    public String getTextArea()
-    {
-        return taHienThi.getText();
-    }
-    
-    public void setTextArea(String sms)
-    {
-        taHienThi.setText(taHienThi.getText() + "\n" + sms);
-    }
-    
-    public void setTextAreaUser(String sms)
-    {
-        taUser.setText(sms);
-    }
-    
-    public void serverKick()
-    {
-        JOptionPane mess = new JOptionPane();
-        mess.showMessageDialog(rootPane, "Bạn đã bị server Kick!");
-        System.exit(0);
-    }
-    
-    public void changeName(String changeYourName)
-    {
-        JOptionPane mess = new JOptionPane();
-        jlName.setText(changeYourName);
-        mess.showMessageDialog(rootPane, "NickName bị trùng, server đã đổi nickname của bạn thành " + changeYourName + "!");     
-    }
+    private GiaoDienChatRieng form;
     
     public GiaoDienClient2(Client client, Socket socket) {
         initComponents();
@@ -88,6 +56,125 @@ public class GiaoDienClient2 extends javax.swing.JFrame {
             }
         });
     }
+    
+    public String getJLName()
+    {
+        return jlName.getText();
+    }
+    public void setTextHienThiCuaGiaoDienChatRieng(String sms)
+    {
+        form.setTextHienThi(sms);
+    }
+    
+    public Client getClient()
+    {
+        return client;
+    }
+    
+    public Socket getSocket()
+    {
+        return socket;
+    }
+    
+    public String getTextArea()
+    {
+        return taHienThi.getText();
+    }
+    
+    public void setTextArea(String sms)
+    {
+        taHienThi.setText(taHienThi.getText() + "\n" + sms);
+    }
+    
+    public void setTextAreaUser(String sms)
+    {
+        taUser.setText(sms);
+    }
+    
+    public String getTextAreaUser()
+    {
+        return taUser.getText();
+    }
+    public void serverKick()
+    {
+        JOptionPane mess = new JOptionPane();
+        mess.showMessageDialog(rootPane, "Bạn đã bị server Kick!");
+        System.exit(0);
+    }
+    
+    public void changeName(String changeYourName)
+    {
+        JOptionPane mess = new JOptionPane();
+        jlName.setText(changeYourName);
+        client.name = changeYourName;
+        mess.showMessageDialog(rootPane, "NickName bị trùng, server đã đổi nickname của bạn thành " + changeYourName + "!");     
+    }
+    public void ThongBaoAccepted(String name)
+    {
+        
+        JOptionPane mess = new JOptionPane();
+        mess.showMessageDialog(rootPane, "Bạn đã có thể chat riêng tư với " + name + "!");     
+        form.openAccept(name);
+    }
+    
+    public void ThongBaoNotAccepted(String name)
+    {
+        JOptionPane mess = new JOptionPane();
+        mess.showMessageDialog(rootPane, name + " đã từ chối chat riêng tư với bạn!");     
+    }
+    public void showAccept(String name)
+    {
+        JOptionPane optionPane = new JOptionPane(name + " muốn chat riêng với bạn!\n" + "Bạn có muốn chat riêng Không?",JOptionPane.QUESTION_MESSAGE,JOptionPane.YES_NO_OPTION);
+       
+        JDialog getTopicDialog =  optionPane.createDialog(null, "New Topic");
+        getTopicDialog.pack();
+        getTopicDialog.setLocationRelativeTo(this);
+        getTopicDialog.setVisible(true);        
+
+        Object selectedValue = optionPane.getValue();
+        int n = -1;
+
+
+        if(selectedValue == null)
+            n = JOptionPane.CLOSED_OPTION;      
+        else
+            n = Integer.parseInt(selectedValue.toString());
+
+
+        if (n == JOptionPane.YES_OPTION){
+            
+            DataOutputStream dos;
+            try {
+                dos = new DataOutputStream(socket.getOutputStream());
+                dos.writeUTF("AcceptConnect");
+                dos.flush();
+            } catch (IOException ex) {
+
+            }
+            form = new GiaoDienChatRieng(this);
+            form.openAccept(name);
+        } else if (n == JOptionPane.NO_OPTION){
+            
+            DataOutputStream dos;
+            try {
+                dos = new DataOutputStream(socket.getOutputStream());
+                dos.writeUTF("NotAcceptConnect");
+                dos.flush();
+            } catch (IOException ex) {
+
+            }
+        } else if (n == JOptionPane.CLOSED_OPTION){
+           DataOutputStream dos;
+            try {
+                dos = new DataOutputStream(socket.getOutputStream());
+                dos.writeUTF("NotAcceptConnect");
+                dos.flush();
+            } catch (IOException ex) {
+
+            }
+        }   
+    }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -150,6 +237,7 @@ public class GiaoDienClient2 extends javax.swing.JFrame {
             }
         });
 
+        taUser.setEditable(false);
         taUser.setColumns(20);
         taUser.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
         taUser.setLineWrap(true);
@@ -264,6 +352,7 @@ public class GiaoDienClient2 extends javax.swing.JFrame {
 
     private void btnNhanTinRiengActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNhanTinRiengActionPerformed
         // TODO add your handling code here:
+        form = new GiaoDienChatRieng(this);
     }//GEN-LAST:event_btnNhanTinRiengActionPerformed
     
     

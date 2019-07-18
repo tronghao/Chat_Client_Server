@@ -22,7 +22,7 @@ public class GiaoDienChucNangKichClient extends javax.swing.JFrame {
     public GiaoDienChucNangKichClient(GiaoDienServer form) {
         initComponents();
         this.form = form;
-        setLocationRelativeTo(null);
+        setLocationRelativeTo(this.form);
         cbxName.removeAllItems();
         
         for(ClientManager item : Server.listSK)

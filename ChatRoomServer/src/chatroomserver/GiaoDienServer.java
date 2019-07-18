@@ -288,7 +288,7 @@ public class GiaoDienServer extends javax.swing.JFrame {
 
     private void btnNhanTinRiengActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNhanTinRiengActionPerformed
         // TODO add your handling code here:
-        formNTR = new GiaoDienServerNhanTinRieng();
+        formNTR = new GiaoDienServerNhanTinRieng(this);
     }//GEN-LAST:event_btnNhanTinRiengActionPerformed
 
     /**
