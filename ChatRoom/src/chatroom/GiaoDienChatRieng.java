@@ -199,7 +199,7 @@ public class GiaoDienChatRieng extends javax.swing.JFrame {
                     dos.writeUTF("PrivateServer!%" + form.getJLName() + ": " + sms);
                     // ma !% là 15
                 } catch (IOException ex) {
-
+                    JOptionPane.showMessageDialog(rootPane, "Kết Nối Đến Server Bị Lỗi");
                 }
             }
             else
@@ -209,7 +209,7 @@ public class GiaoDienChatRieng extends javax.swing.JFrame {
                     dos.writeUTF("PrivateClinet!%" + nameConnect  + "!%" + form.getJLName() + "!%" + form.getJLName() + ": " + sms);
                     // ma !% là 15
                 } catch (IOException ex) {
-
+                    JOptionPane.showMessageDialog(rootPane, "Kết Nối Đến Server Bị Lỗi");
                 }
             }
  
@@ -318,7 +318,7 @@ public class GiaoDienChatRieng extends javax.swing.JFrame {
             }
             catch(IOException e)
             {
-
+               JOptionPane.showMessageDialog(rootPane, "Kết Nối Đến Server Bị Lỗi");
             }
         }
     }//GEN-LAST:event_btnKetNoiActionPerformed
