@@ -140,9 +140,22 @@ public class GiaoDienClient extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnThamGiaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThamGiaActionPerformed
-    	client.name = tfName.getText();
-        client.host = tfHost.getText();
-    	client.ThucThi();
+    	if(tfName.getText().equals(""))
+        {
+            JOptionPane jO = new JOptionPane();
+            jO.showMessageDialog(rootPane, "Vui lòng cho biết NickName!");
+        }    
+        else if(tfHost.getText().equals(""))
+        {
+            JOptionPane jO = new JOptionPane();
+            jO.showMessageDialog(rootPane, "Vui lòng cho biết host!");    
+        }        
+        else
+        {
+            client.name = tfName.getText();
+            client.host = tfHost.getText();
+            client.ThucThi();
+        }
     }//GEN-LAST:event_btnThamGiaActionPerformed
 
     /**

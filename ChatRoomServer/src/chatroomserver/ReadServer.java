@@ -37,6 +37,7 @@ public class ReadServer extends Thread{
             dis = new DataInputStream(socket.getInputStream());
             while(true)
             {
+                
                 String sms = dis.readUTF();
                 String manyName = "";
                 int thayDoi = 0;
@@ -112,6 +113,7 @@ public class ReadServer extends Thread{
                             }
                         }
                     }
+                    form.capNhatCbxCuaGiaoDienServerNhanTinRieng();
                     continue;
                 }
                 if(sms.contains("exit"))
@@ -146,32 +148,34 @@ public class ReadServer extends Thread{
                 
                 if(sms.contains("connectToClient:"))
                 {
-                    String name1 = sms.substring(17);
-                    String name2 = "";
+                    String data[] = sms.split("!%");
+                    int idFormGui = Integer.parseInt(data[1]);
+                    String nameCanKetNoi = data[2];
+                    String nameGuiKetNoi = "";
                     for(ClientManager item : Server.listSK)
                     {
                         if(item.getSocket() == socket)
                         {
-                            name2 = item.getName();
+                            nameGuiKetNoi = item.getName();
                             break;
                         }
                     }
                     
                     ChatRiengClient item = new ChatRiengClient();
-                    item.setName1(name1);
-                    item.setName2(name2);
+                    item.setName1(nameCanKetNoi);
+                    item.setName2(nameGuiKetNoi);
                     
                     Server.listConnect.add(item);
                     
                     for(ClientManager item2 : Server.listSK)
                     {
-                        if(item2.getName().equals(name1))
+                        if(item2.getName().equals(nameCanKetNoi))
                         {
                             DataOutputStream dos;
                             try
                             {
                                 dos = new DataOutputStream(item2.getSocket().getOutputStream());
-                                dos.writeUTF("AcceptConnectToClient: " + name2);
+                                dos.writeUTF("AcceptConnectToClient: !%" + idFormGui + "!%" + nameGuiKetNoi);
                             }
                             catch(IOException e)
                             {
@@ -182,39 +186,51 @@ public class ReadServer extends Thread{
                     continue;
                 }
                 
-                if(sms.equals("AcceptConnect"))
+                if(sms.contains("AcceptConnect: "))
                 {
                     System.out.println("Da vao AcceptConnect");
-                    String name1 = "";
-                    String name2 = "";
+                    String data[] = sms.split("!%");
+                    int idFormGui = Integer.parseInt(data[1]);
+                    int idFormNhan = Integer.parseInt(data[2]);
+                    String nameClientXacNhanKetNoi = "";
+                    String nameCLientGuiYeuCauKetNoi = data[3];
                     for(ClientManager item : Server.listSK)
                     {
                         if(item.getSocket() == socket)
                         {
-                            name1 = item.getName();
+                            nameClientXacNhanKetNoi = item.getName();
                             break;
                         }
                     }
                     
                     for(ChatRiengClient item : Server.listConnect)
                     {
-                        if(item.getName1().equals(name1))
+                        if((item.getName1().equals(nameCLientGuiYeuCauKetNoi) && item.getName2().equals(nameClientXacNhanKetNoi)))
                         {
-                            name2 = item.getName2();
+                            item.setIdForm1(idFormGui);
+                            item.setIdForm2(idFormNhan);
                             break;
                         }
+                        if((item.getName1().equals(nameClientXacNhanKetNoi) && item.getName2().equals(nameCLientGuiYeuCauKetNoi)))
+                        {
+                            item.setIdForm1(idFormNhan);
+                            item.setIdForm2(idFormGui);
+                            break;
+                        }
+                        
                     }
-                    System.out.println("Name1:"+name1 +" Name2:" + name2);
+                    
+                    System.out.println("Name1:"+nameClientXacNhanKetNoi +" Name2:" + nameCLientGuiYeuCauKetNoi);
                     for(ClientManager item : Server.listSK)
                     {
                         System.out.println("Da vao vong lap");
-                        if(item.getName().equals(name2))
+                        if(item.getName().equals(nameCLientGuiYeuCauKetNoi))
                         {
                            DataOutputStream dos;
                             try
                             {
                                 dos = new DataOutputStream(item.getSocket().getOutputStream());
-                                dos.writeUTF("ClientAccepted: " + name1);
+                                dos.writeUTF("ClientAccepted: !%" + idFormGui + "!%" + nameClientXacNhanKetNoi);
                                 System.out.println("Da gui client AcceptConnect");
                             }
                             catch(IOException e)
@@ -227,39 +243,33 @@ public class ReadServer extends Thread{
                     continue;
                 }
                 
-                if(sms.equals("NotAcceptConnect"))
+                if(sms.contains("AcceptNotConnect: "))
                 { 
-                    String name1 = "";
-                    String name2 = "";
+                    String data[] = sms.split("!%");
+                    int idFormGui = Integer.parseInt(data[1]);
+                    String nameClientXacNhanKetNoi = "";
+                    String nameCLientGuiYeuCauKetNoi = data[2];
                     for(ClientManager item : Server.listSK)
                     {
                         if(item.getSocket() == socket)
                         {
-                            name1 = item.getName();
+                            nameClientXacNhanKetNoi = item.getName();
                             break;
                         }
                     }
                     
-                    for(ChatRiengClient item : Server.listConnect)
-                    {
-                        if(item.getName1().equals(name1))
-                        {
-                            name2 = item.getName2();
-                            break;
-                        }
-                    }
-                    System.out.println("Name1:"+name1 +" Name2:" + name2);
+                    System.out.println("Name1:"+nameClientXacNhanKetNoi +" Name2:" + nameCLientGuiYeuCauKetNoi);
                     for(ClientManager item : Server.listSK)
                     {
                         System.out.println("Da vao vong lap");
-                        if(item.getName().equals(name2))
+                        if(item.getName().equals(nameCLientGuiYeuCauKetNoi))
                         {
                            DataOutputStream dos;
                             try
                             {
                                 dos = new DataOutputStream(item.getSocket().getOutputStream());
-                                dos.writeUTF("ClientNotAccepted: " + name1);
-                                System.out.println("Da gui client AcceptConnect");
+                                dos.writeUTF("ClientNotAccepted: !%" + idFormGui + "!%" + nameClientXacNhanKetNoi);
+                                System.out.println("Da gui client Not AcceptConnect");
                             }
                             catch(IOException e)
                             {
@@ -271,7 +281,7 @@ public class ReadServer extends Thread{
                     
                     for(ChatRiengClient item : Server.listConnect)
                     {
-                        if(item.getName2().equals(name2) && item.getName1().equals(name1))
+                        if(item.getName2().equals(nameCLientGuiYeuCauKetNoi) && item.getName1().equals(nameClientXacNhanKetNoi))
                         {
                             Server.listConnect.remove(item);
                             break;
@@ -284,16 +294,71 @@ public class ReadServer extends Thread{
                 if(sms.contains("PrivateClinet!%"))
                 {
                     String[] data = sms.split("!%");
+                    String nameClientNhan = data[1];
+                    String nameClientGui = data[2];
+                    int idFormNhan=-1;
+                    for(ChatRiengClient item : Server.listConnect)
+                    {
+                        if(item.getName1().equals(nameClientNhan) && item.getName2().equals(nameClientGui))
+                        {
+                            idFormNhan = item.getIdForm1();
+                            break;
+                        }
+                        if(item.getName1().equals(nameClientGui) && item.getName2().equals(nameClientNhan))
+                        {
+                            idFormNhan = item.getIdForm2();
+                            break;
+                        }
+                    }
                     for(ClientManager item : Server.listSK)
                     {
-                        if(item.getName().equals(data[1]))
+                        if(item.getName().equals(nameClientNhan))
                         {
                                 DataOutputStream dos = new DataOutputStream(item.getSocket().getOutputStream());
-                                dos.writeUTF("PrivateClinet!%" + data[2]);
+                                dos.writeUTF("PrivateClinet!%" + idFormNhan + "!%" + data[3]);
                                 break;
                         }   				
                     }
-                    form.setTextArea(data[0] + " " + data[1] + ": " + data[2]);
+                    form.setTextArea(data[0] + " " + data[1] + "<<-- " + data[3]);
+                    continue;
+                }
+                
+                if(sms.contains("PrivateServer!%"))
+                {
+                    String[] data = sms.split("!%");
+                    String tinNhan = data[1];
+                    form.setTextHienThiGiaoDienNhanTinRieng(tinNhan);
+                    continue;
+                }
+                
+                if(sms.contains("closeKetNoi: "))
+                {
+                    String data[] = sms.split("!%");
+                    String nameClientGui = data[2];
+                    String nameClientNhan = data[1];
+                    int idFormNhan = -1;
+                    for(ChatRiengClient item : Server.listConnect)
+                    {
+                        if(item.getName1().equals(nameClientNhan) && item.getName2().equals(nameClientGui))
+                        {
+                            idFormNhan = item.getIdForm1();
+                            break;
+                        }
+                        if(item.getName1().equals(nameClientGui) && item.getName2().equals(nameClientNhan))
+                        {
+                            idFormNhan = item.getIdForm2();
+                            break;
+                        }
+                    }
+                    for(ClientManager item : Server.listSK)
+                    {
+                        if(item.getName().equals(nameClientNhan))
+                        {
+                                DataOutputStream dos = new DataOutputStream(item.getSocket().getOutputStream());
+                                dos.writeUTF("closeKetNoi!%" + idFormNhan);
+                                break;
+                        }   				
+                    }
                     continue;
                 }
                 

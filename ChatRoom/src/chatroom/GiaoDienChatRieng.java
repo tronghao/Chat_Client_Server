@@ -5,6 +5,9 @@
  */
 
 
+
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import javax.swing.JOptionPane;
@@ -17,23 +20,29 @@ import javax.swing.SwingUtilities;
  * @author TrongHao
  */
 public class GiaoDienChatRieng extends javax.swing.JFrame {
-    private String name;
+    private String nameConnect;
     private GiaoDienClient2 form;
+    private boolean trangThaiButtonCbx;
+    private int idCuaForm;
+
     /**
      * Creates new form GiaoDienChatRieng
      * @param form
      */
-    public GiaoDienChatRieng(GiaoDienClient2 form) {
+    public GiaoDienChatRieng(GiaoDienClient2 form, int id) {
         initComponents();
         this.form = form;
-
+        this.idCuaForm = id;
+        
         setLocationRelativeTo(this.form);
         setVisible(true);
+        trangThaiButtonCbx = true;
         
         
         cbxName.removeAllItems();
         String textTA = form.getTextAreaUser();
         String[] name = textTA.split("\\n");
+        cbxName.addItem("Server");
         for (String line : name)
         {
             if(!line.equals(form.getClient().name))
@@ -42,6 +51,25 @@ public class GiaoDienChatRieng extends javax.swing.JFrame {
         
 
         btnGui.setEnabled(false);
+        
+        this.addWindowListener(new WindowAdapter() {
+            public void windowClosed(WindowEvent e) {
+                
+            }
+            public void windowClosing(WindowEvent e) {
+                if(trangThaiButtonCbx == false)
+                {
+                    DataOutputStream dos;
+                    try {
+                        dos = new DataOutputStream(form.getSocket().getOutputStream());
+                        dos.writeUTF("closeKetNoi: !%" + nameConnect + "!%" + form.getJLName());
+                        dos.flush();
+                    } catch (IOException ex) {
+
+                    }
+                }
+            }
+        });
     }
 
     /**
@@ -63,6 +91,7 @@ public class GiaoDienChatRieng extends javax.swing.JFrame {
         jlConnectNameClient = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Chat Riêng");
 
         cbxName.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         cbxName.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
@@ -146,63 +175,151 @@ public class GiaoDienChatRieng extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    public void setNameConnect(String name)
+    {
+        nameConnect = name;
+    }
+    
     private void btnGuiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuiActionPerformed
         // TODO add your handling code here:
-        DataOutputStream dos;
-        String sms = tfTinNhan.getText();
-        
-        try {
-            dos = new DataOutputStream(form.getSocket().getOutputStream());
-            dos.writeUTF("PrivateClinet!%" + name + "!%" + form.getJLName() + ": " + sms);
-            // ma !% là 15
-        } catch (IOException ex) {
-
-        }
-
-        taHienThi.setText(taHienThi.getText() + "\nTôi: " + sms);
-        tfTinNhan.setText("");
-
-        cbxName.removeAllItems();
-
-        String textTA = form.getTextAreaUser();
-        String[] name = textTA.split("\\n");
-        for (String line : name)
+        if(tfTinNhan.getText().equals(""))
         {
-            if(!line.equals(form.getClient().name))
-                cbxName.addItem(line);
+            JOptionPane jO = new JOptionPane();
+            jO.showMessageDialog(rootPane, "Vui lòng nhập nội dung tin nhắn!");
+        }
+        else
+        {
+            DataOutputStream dos;
+            String sms = tfTinNhan.getText();
+            
+            if(nameConnect.equals("Server"))
+            {
+                try {
+                    dos = new DataOutputStream(form.getSocket().getOutputStream());
+                    dos.writeUTF("PrivateServer!%" + form.getJLName() + ": " + sms);
+                    // ma !% là 15
+                } catch (IOException ex) {
+
+                }
+            }
+            else
+            {
+                try {
+                    dos = new DataOutputStream(form.getSocket().getOutputStream());
+                    dos.writeUTF("PrivateClinet!%" + nameConnect  + "!%" + form.getJLName() + "!%" + form.getJLName() + ": " + sms);
+                    // ma !% là 15
+                } catch (IOException ex) {
+
+                }
+            }
+ 
+            taHienThi.setText(taHienThi.getText() + "\nTôi: " + sms);
+            tfTinNhan.setText("");
+
+            cbxName.removeAllItems();
+
+            String textTA = form.getTextAreaUser();
+            String[] name = textTA.split("\\n");
+            cbxName.addItem("Server");
+            for (String line : name)
+            {
+                if(!line.equals(form.getClient().name))
+                    cbxName.addItem(line);
+            } 
         }
     }//GEN-LAST:event_btnGuiActionPerformed
     
-    public void openAccept(String name)
+    public void openConnectServer()
     {
         btnGui.setEnabled(true);
         btnKetNoi.setEnabled(false);
-        jlConnectNameClient.setText("Đang kết nôi đến " + name);
-        this.name = name;
+        cbxName.setEnabled(false);
+        trangThaiButtonCbx = false;
+        jlConnectNameClient.setText("Đang kết nối đến Server");
         
         JRootPane rootPane = SwingUtilities.getRootPane(btnGui); 
         rootPane.setDefaultButton(btnGui);
     }
     
+    public void openAccept(String name)
+    {
+        for(FormChatRieng item : form.chatRiengList)
+        {
+            if(item.getId() == idCuaForm)
+            {
+                item.setName(name);
+                break;
+            }
+        }
+        JOptionPane mess = new JOptionPane();
+        mess.showMessageDialog(rootPane, "Bạn đã có thể chat riêng tư với " + name + "!"); 
+        btnGui.setEnabled(true);
+        btnKetNoi.setEnabled(false);
+        cbxName.setEnabled(false);
+        trangThaiButtonCbx = false;
+        jlConnectNameClient.setText("Đang kết nối đến " + name);
+        this.nameConnect = name;
+        
+        JRootPane rootPane = SwingUtilities.getRootPane(btnGui); 
+        rootPane.setDefaultButton(btnGui);
+    }
+    
+    public void tuChoiKetNoi(String nameClientXacNhan)
+    {
+        JOptionPane mess = new JOptionPane();
+        mess.showMessageDialog(rootPane, nameClientXacNhan + " đã từ chối chat riêng tư với bạn!");  
+        btnKetNoi.setEnabled(true);
+        cbxName.setEnabled(true);
+        trangThaiButtonCbx = true;
+        //cập nhật lại các client
+        cbxName.removeAllItems();
+
+        String textTA = form.getTextAreaUser();
+        String[] name = textTA.split("\\n");
+        cbxName.addItem("Server");
+        for (String line : name)
+        {
+            if(!line.equals(form.getClient().name))
+                cbxName.addItem(line);
+        }
+    }
     public void setTextHienThi(String sms)
     {
         taHienThi.setText(taHienThi.getText() + "\n" + sms);
     }
     
+    public void closeForm()
+    {
+        JOptionPane jO = new JOptionPane();
+        jO.showMessageDialog(rootPane, nameConnect + " đã ngắt kết nối chat riêng với bạn!");
+        this.dispose();
+    }
+    
     private void btnKetNoiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnKetNoiActionPerformed
         // TODO add your handling code here:
-        DataOutputStream dos;
-        try
+        if(cbxName.getSelectedItem().toString().equals("Server"))
         {
-            dos = new DataOutputStream(form.getSocket().getOutputStream());
-            dos.writeUTF("connectToClient: " + cbxName.getSelectedItem().toString());
-            dos.flush();
-            JOptionPane jp = new JOptionPane();
-            jp.showMessageDialog(rootPane, "Xin Chờ Xác Nhận!");
+            this.dispose();
+            form.moChatRiengServer();
         }
-        catch(IOException e)
+        else
         {
-           
+            DataOutputStream dos;
+            try
+            {
+                dos = new DataOutputStream(form.getSocket().getOutputStream());
+                dos.writeUTF("connectToClient: !%" + idCuaForm + "!%" + cbxName.getSelectedItem().toString());
+                dos.flush();
+                JOptionPane jp = new JOptionPane();
+                jp.showMessageDialog(rootPane, "Xin Chờ Xác Nhận!");
+                btnKetNoi.setEnabled(false);
+                cbxName.setEnabled(false);
+                trangThaiButtonCbx = false;
+            }
+            catch(IOException e)
+            {
+
+            }
         }
     }//GEN-LAST:event_btnKetNoiActionPerformed
 

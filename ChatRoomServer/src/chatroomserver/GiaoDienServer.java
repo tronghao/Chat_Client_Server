@@ -1,6 +1,10 @@
 
 
 
+import chatroomserver.ClientManager;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import javax.swing.JOptionPane;
 import javax.swing.JRootPane;
 import javax.swing.SwingUtilities;
 
@@ -17,7 +21,6 @@ import javax.swing.SwingUtilities;
  */
 public class GiaoDienServer extends javax.swing.JFrame {
     private Server server;
-    private WriteServer write;
     private GiaoDienChucNangKichClient form2;
     private GiaoDienServerNhanTinRieng formNTR;
     /**
@@ -30,6 +33,9 @@ public class GiaoDienServer extends javax.swing.JFrame {
         this.server = server;
         JRootPane rootPane = SwingUtilities.getRootPane(btnGui); 
         rootPane.setDefaultButton(btnGui);
+        
+        formNTR = new GiaoDienServerNhanTinRieng(this);
+        formNTR.setVisible(false);
     }
     
        
@@ -271,8 +277,31 @@ public class GiaoDienServer extends javax.swing.JFrame {
 
     private void btnGuiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuiActionPerformed
         // TODO add your handling code here:
-        write = new WriteServer("Server", this);
-        write.start();
+
+        if(tfTinNhan.getText().equals(""))
+        {
+            JOptionPane jO = new JOptionPane();
+            jO.showMessageDialog(rootPane, "Vui lòng nhập nội dung tin nhắn!");
+        }
+        else
+        {
+            String sms = tfTinNhan.getText(); 
+            DataOutputStream dos;
+            try
+            {
+                for(ClientManager item : Server.listSK)
+                {
+                    dos = new DataOutputStream(item.getSocket().getOutputStream());
+                    dos.writeUTF(server.name + ": " + sms);	
+                }
+                this.setTextArea(server.name + ": " + sms);
+                this.setTinNhan("");
+            }
+            catch(IOException e)
+            {		
+
+            }
+        }
     }//GEN-LAST:event_btnGuiActionPerformed
 
     private void btnThoatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThoatActionPerformed
@@ -288,9 +317,21 @@ public class GiaoDienServer extends javax.swing.JFrame {
 
     private void btnNhanTinRiengActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNhanTinRiengActionPerformed
         // TODO add your handling code here:
-        formNTR = new GiaoDienServerNhanTinRieng(this);
+        formNTR.setVisible(true);
+        formNTR.capNhatCbx();
     }//GEN-LAST:event_btnNhanTinRiengActionPerformed
-
+    
+    public void capNhatCbxCuaGiaoDienServerNhanTinRieng()
+    {
+        formNTR.capNhatCbx();
+    }
+    
+    public void setTextHienThiGiaoDienNhanTinRieng(String sms)
+    {
+        formNTR.setLocationRelativeTo(this);
+        formNTR.setVisible(true);
+        formNTR.setTextHienThi(sms);
+    }
     /**
      * @param args the command line arguments
      */
