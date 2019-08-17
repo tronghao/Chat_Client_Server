@@ -13,6 +13,7 @@ import java.net.Socket;
  * @author TrongHao
  */
 public class ChatRiengClient {
+    
     private String name1;
     private String name2;
     private int idForm1;

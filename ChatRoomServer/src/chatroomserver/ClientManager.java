@@ -12,6 +12,7 @@ import java.net.Socket;
  * @author TrongHao
  */
 public class ClientManager {
+    
     private Socket socket;
     private String name;
     

@@ -20,9 +20,11 @@ import javax.swing.SwingUtilities;
  * @author TrongHao
  */
 public class GiaoDienServer extends javax.swing.JFrame {
+    
     private Server server;
     private GiaoDienChucNangKichClient form2;
     private GiaoDienServerNhanTinRieng formNTR;
+    
     /**
      * Creates new form GiaoDienServer
      */

@@ -18,11 +18,13 @@ import java.util.*;
 import javax.swing.JOptionPane;
 
 public class Client {
-	public String name;
-	public String host;
-	private int port = 9598;
-        public GiaoDienClient form;
-        public GiaoDienClient2 form2;
+    
+    public String name;
+    public String host;
+    private int port = 9598;
+    public GiaoDienClient form;
+    public GiaoDienClient2 form2;
+    
     public Client() 
     {
     	form = new GiaoDienClient(this);

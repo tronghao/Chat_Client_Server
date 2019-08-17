@@ -20,6 +20,7 @@ import javax.swing.SwingUtilities;
  * @author TrongHao
  */
 public class GiaoDienChatRieng extends javax.swing.JFrame {
+    
     private String nameConnect;
     private GiaoDienClient2 form;
     private boolean trangThaiButtonCbx;

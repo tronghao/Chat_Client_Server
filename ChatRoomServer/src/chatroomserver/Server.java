@@ -19,12 +19,14 @@ import java.util.logging.Logger;
 import java.util.Scanner;
 
 public class Server {
-	public String name = "Server";
-	private int port = 9598;
-	public static ArrayList<ClientManager> listSK = new ArrayList<>();
-        public static ArrayList<ChatRiengClient> listConnect = new ArrayList<>();
-        private GiaoDienServer form;
-        private ReadServer read;
+    
+    public String name = "Server";
+    private int port = 9598;
+    public static ArrayList<ClientManager> listSK = new ArrayList<>();
+    public static ArrayList<ChatRiengClient> listConnect = new ArrayList<>();
+    private GiaoDienServer form;
+    private ReadServer read;
+    
     public Server()
     {
         

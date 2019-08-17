@@ -9,6 +9,7 @@
  * @author TrongHao
  */
 public class FormChatRieng {
+    
     private GiaoDienChatRieng form2;
     private String name;
     private GiaoDienClient2 form;

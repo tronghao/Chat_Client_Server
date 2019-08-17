@@ -25,6 +25,7 @@ import javax.swing.SwingUtilities;
  * @author TrongHao
  */
 public class GiaoDienClient2 extends javax.swing.JFrame {
+    
     private Client client;
     private Socket socket;
     private ReadClient read;

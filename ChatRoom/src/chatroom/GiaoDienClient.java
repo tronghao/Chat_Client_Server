@@ -16,7 +16,9 @@ import javax.swing.SwingUtilities;
  * @author TrongHao
  */
 public class GiaoDienClient extends javax.swing.JFrame {
+    
     private Client client;
+    
     /**
      * Creates new form GiaoDienClient
      */

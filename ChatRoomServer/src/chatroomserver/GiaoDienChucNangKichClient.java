@@ -17,6 +17,7 @@ import java.util.logging.Logger;
  * @author TrongHao
  */
 public class GiaoDienChucNangKichClient extends javax.swing.JFrame {
+    
     private GiaoDienServer form;
 
     public GiaoDienChucNangKichClient(GiaoDienServer form) {

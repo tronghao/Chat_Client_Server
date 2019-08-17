@@ -20,6 +20,7 @@ import javax.swing.SwingUtilities;
  * @author TrongHao
  */
 public class GiaoDienServerNhanTinRieng extends javax.swing.JFrame {
+    
     private GiaoDienServer form;
     /**
      * Creates new form GiaoDienServerNhanTinRieng
